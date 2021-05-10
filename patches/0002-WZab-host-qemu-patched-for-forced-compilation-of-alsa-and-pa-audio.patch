@@ -1,0 +1,51 @@
+diff --git a/package/qemu/1002-WZ-configure-with-system-alsa-and-pa.patch b/package/qemu/1002-WZ-configure-with-system-alsa-and-pa.patch
+new file mode 100644
+index 0000000..f2ff952
+--- /dev/null
++++ b/package/qemu/1002-WZ-configure-with-system-alsa-and-pa.patch
+@@ -0,0 +1,30 @@
++diff --git a/configure b/configure
++index 7cceae4..1bd36b7 100755
++--- a/configure
+++++ b/configure
++@@ -3333,6 +3333,17 @@ fi
++ 
++ ##########################################
++ # Sound support libraries probe
+++printenv | grep PKG_CONF
+++tmp_pkg_config() {
+++  (
+++    unset PKG_CONFIG
+++    unset PKG_CONFIG_LIBDIR
+++    /usr/bin/pkg-config "$@"
+++  )
+++}
+++
+++old_pkg_config=$pkg_config
+++pkg_config="tmp_pkg_config"
++ 
++ audio_drv_list=$(echo "$audio_drv_list" | sed -e 's/,/ /g')
++ for drv in $audio_drv_list; do
++@@ -3425,6 +3436,7 @@ for drv in $audio_drv_list; do
++     ;;
++     esac
++ done
+++pkg_config=$old_pkg_config
++ 
++ ##########################################
++ # BrlAPI probe
+diff --git a/package/qemu/qemu.mk b/package/qemu/qemu.mk
+index b552ea1..5c40384 100644
+--- a/package/qemu/qemu.mk
++++ b/package/qemu/qemu.mk
+@@ -334,8 +334,9 @@ define HOST_QEMU_CONFIGURE_CMDS
+ 		--interp-prefix=$(STAGING_DIR) \
+ 		--cc="$(HOSTCC)" \
+ 		--host-cc="$(HOSTCC)" \
++		--audio-drv-list=alsa,pa,oss \
+ 		--extra-cflags="$(HOST_QEMU_CFLAGS)" \
+-		--extra-ldflags="$(HOST_LDFLAGS)" \
++		--extra-ldflags="$(HOST_LDFLAGS) -lrt -lm" \
+ 		--meson=$(HOST_DIR)/bin/meson \
+ 		--ninja=$(HOST_DIR)/bin/ninja \
+ 		--disable-bzip2 \

@@ -1,0 +1,8 @@
+#!/bin/sh
+(
+    echo "Starting playlist server... "
+    echo "Run localhost:8888/ on local machine to enter the playlist server system"
+    cd ~/../music_player/
+    export FLASK_APP=media_organizer.py
+    flask run --host 10.0.2.15 --port 8810
+)

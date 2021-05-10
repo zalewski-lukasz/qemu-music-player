@@ -1,0 +1,5 @@
+#!/bin/sh
+(
+    cd ~/../music_player/
+    python3 media_player.py
+)

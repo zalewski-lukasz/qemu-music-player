@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      table {border-collapse: collapse;}
+      div {display: block; text-align: center; margin: 30px;}
+      table {border-collapse: collapse; }
+      tr:nth-child(even) {background-color: #f2f2f2;}
+      th {background-color: rgb(95, 228, 155); color: white;}
+    </style>
+    <title>Song Playlist Management</title>
+  </head>
+  <body>
+  <div>
+      <h1 >Upload New Song</h1>
+      <h2>Only .wav files can be used!</h2>
+      <form method="POST" action="" enctype="multipart/form-data" >
+        <p><input type="file" name="file"></p>
+        <p><input type="submit" value="Submit"></p>
+      </form>
+  </div>
+  <table align="center" border="1px solid black">
+    <tr>
+      <th>Song</th>
+      <th>Options</th>
+    </tr>
+      {% block body %}
+        {% for file in files%}
+        <tr>
+          <td align="center" height="50px" width="30%">{{file}}</td>
+          <td align="center" width="30%">
+            <a href="{{ url_for('download_files', filename=file)}}" >
+              <button class="btn btn-default">Download</button>
+            </a>
+            <a href="{{ url_for('delete_files', filename=file)}}" >
+              <button class="btn btn-default">Delete</button>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      {% endblock %}
+  </table>
+  </body>
+</html>
