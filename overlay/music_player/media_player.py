@@ -158,11 +158,13 @@ def prepare_switch(chip):
     return switch
 
 def prepare_buttons(chip):
-    buttons = list()
-    for i in range(12, 18):
-        button = chip.get_line(i)
-        button.request(consumer="its_me", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
-        buttons.append(button)
+    #buttons = list()
+    #for i in range(12, 18):
+    #    button = chip.get_line(i)
+    #    button.request(consumer="its_me", type=gpiod.LINE_REQ_EV_FALLING_EDGE)
+    #    buttons.append(button)
+    buttons = chip.get_lines([12, 13, 14, 15, 16, 17])
+    buttons.request(consumer="its_me", type=gpiod.LINE_REQ_EV_FALLING_EDGE)
     return buttons
 
 def turn_led_on(led):
@@ -208,6 +210,15 @@ def run():
     switch = prepare_switch(chip)
     buttons = prepare_buttons(chip)
 
+    buttons_map = {
+        str(buttons.to_list()[0]): "prev",
+        str(buttons.to_list()[1]): "play",
+        str(buttons.to_list()[2]): "resume",
+        str(buttons.to_list()[3]): "next",
+        str(buttons.to_list()[4]): "vol_down",
+        str(buttons.to_list()[5]): "vol_up",
+    }
+
     stdscr = None
 
     files = get_music_files()
@@ -215,27 +226,34 @@ def run():
 
     playlist.print(stdscr)
     adjust_leds(leds, playlist.leds_number)
+
+    press_detect = False
     while True:
 
-        if control_with_gpio == True:
-            for i in range (0, 6):
-                btn = buttons[i]
-                ev_line = btn.event_wait(1)
-                if ev_line:
-                    event = btn.event_read()
-                    if event.type == gpiod.LineEvent.FALLING_EDGE: continue
-                    if i == 0: playlist.play_previous(stdscr)
-                    if i == 1: playlist.play_picked()
-                    if i == 2: playlist.resume_playing(stdscr)
-                    if i == 3: playlist.play_next(stdscr)
-                    if i == 4: 
-                        playlist.decrease_volume(stdscr)
-                        adjust_leds(leds, playlist.leds_number)
-                    if i == 5: 
-                        playlist.increase_volume(stdscr)
-                        adjust_leds(leds, playlist.leds_number)
+        buttons_bulk = buttons.event_wait(1)
 
+        if buttons_bulk:
+            src = str(buttons_bulk[0].event_read().source)
 
+            if buttons_map.get(src) is not None:
+                command = buttons_map[src]
+
+                if press_detect == True:
+                    press_detect = False
+                    continue
+                else:
+                    press_detect = True
+
+                if command == "prev": playlist.play_previous(stdscr)
+                elif command == "play": playlist.play_picked()
+                elif command == "resume": playlist.resume_playing(stdscr)
+                elif command == "next": playlist.play_next(stdscr)
+                elif command == "vol_down": 
+                    playlist.decrease_volume(stdscr)
+                    adjust_leds(leds, playlist.leds_number)
+                elif command == "vol_up":
+                    playlist.increase_volume(stdscr)
+                    adjust_leds(leds, playlist.leds_number)
 
 def main(stdscr):
      
