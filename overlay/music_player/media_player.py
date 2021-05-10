@@ -145,6 +145,7 @@ def prepare_chip():
     return gpiod.Chip('9008000.gpio')
 
 def prepare_leds(chip):
+
     leds = list()
     for i in range (24, 32):
         led = chip.get_line(i)
@@ -153,16 +154,13 @@ def prepare_leds(chip):
     return leds
 
 def prepare_switch(chip):
+
     switch = chip.get_line(0)
     switch.request(consumer="its_me", type=gpiod.LINE_REQ_EV_BOTH_EDGES)
     return switch
 
 def prepare_buttons(chip):
-    #buttons = list()
-    #for i in range(12, 18):
-    #    button = chip.get_line(i)
-    #    button.request(consumer="its_me", type=gpiod.LINE_REQ_EV_FALLING_EDGE)
-    #    buttons.append(button)
+
     buttons = chip.get_lines([12, 13, 14, 15, 16, 17])
     buttons.request(consumer="its_me", type=gpiod.LINE_REQ_EV_FALLING_EDGE)
     return buttons

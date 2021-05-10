@@ -9,6 +9,12 @@ app = Flask(__name__)
 auth = HTTPBasicAuth()
 app.config['PLAYLIST_PATH'] = 'songs'
 
+def get_music_files():
+    files = []
+    for file in glob.glob(f"{app.config['PLAYLIST_PATH']}/*.wav"):
+        files.append(file)
+    return files
+
 users = {
     "root": generate_password_hash("password")
 }
@@ -21,7 +27,11 @@ def verify_password(username, password):
 @app.route('/')
 def index():
     all_files = os.listdir(app.config['PLAYLIST_PATH'])
-    return render_template('playlist.html', files = all_files)
+    selected_files = []
+    for file in all_files:
+        if file.endswith(".wav"):
+            selected_files.append(file)
+    return render_template('playlist.html', files = selected_files)
 
 @app.route('/', methods=['GET', 'POST'])
 @auth.login_required
@@ -29,6 +39,8 @@ def upload_files():
     if request.method == "POST":
        if request.files:
           new_file = request.files['file']
+          if new_file.filename.endswith(".wav") == False:
+              return redirect(url_for('index'))
           new_file.save(os.path.join(app.config['PLAYLIST_PATH'], new_file.filename))
     return redirect(url_for('index'))
 
