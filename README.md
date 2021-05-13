@@ -1,5 +1,5 @@
 # qemu-music-player
-Project implementing simple music player and file server for qemu system
+Project implementing simple music player and file server for qemu system, based on one of the assignments for the "Linux in Embedded Systems" course at Warsaw University of Technology.
 
 ## Information
 The goal of the application is to try to create and use music player in emulated system simulating embedded system environment, close in behaviour to Raspberry Pi devices. As a result, simple application in Python was created to make use of the GUI emulator and its buttons and LED diodes. It gives user the possibility to:
