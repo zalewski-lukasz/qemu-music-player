@@ -52,6 +52,3 @@ localhost:8888
 ```
 After that, the user will be able to choose files for deletion, upload and download the file. Only .wav files are used.
 
-## To do list
-- Split music_player.py into two seperate .py files running music player with either keyboard input, or with GUI input
-- Add song playing controls to web interface
