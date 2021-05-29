@@ -14,6 +14,8 @@ There is also an option to manage the song playlist with the web interface, whic
 - download the chosen song onto the host system
 - upload the song from the host system
 
+The the server authentication for uploading a file is based on the https://pypi.org/project/Flask-HTTPAuth/. For that, I downloaded the module manually, and put it together with the .py files in the overlay directory.
+
 For now, the application has also support for the keyboard with usage of the curses module, if a certain flag is set in code as False. It is mostly here only to provide the ability to test the system without the GUI setup, and with the standard keyboard system.
 
 ## Usage
@@ -50,5 +52,5 @@ The above command runs the server. To access it, on the host system in browser t
 ```
 localhost:8888
 ```
-After that, the user will be able to choose files for deletion, upload and download the file. Only .wav files are used.
+After that, the user will be able to choose files for deletion, upload and download the file. Only .wav files are used, as pygame doesn't support the .mp3 files.
 
